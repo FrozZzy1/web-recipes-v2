@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.api.schemes.category import AddCategoryScheme
 from app.database.models.category import CategoryOrm
-from app.api.dependencies.session import get_session
+from app.api.dependencies.session import async_session
 
 
 class CategoryRepository:
@@ -13,7 +13,7 @@ class CategoryRepository:
         data: AddCategoryScheme
     ) -> dict:
         with suppress(IntegrityError):
-            async with get_session() as session:
+            async with async_session() as session:
                 category = CategoryOrm(
                     title=data.title,
                 )
@@ -21,5 +21,5 @@ class CategoryRepository:
                 await session.commit()
 
                 return {
-                    'data': category,
+                    'data': category.id,
                 }
